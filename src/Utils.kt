@@ -36,3 +36,4 @@ inline fun executeWithTime(part1: Boolean = true, block: () -> Any) {
 
 fun Int.isOdd() = this % 2 != 0
 fun Int.isEven() = this % 2 == 0
+fun String.toListOfDigits() = map { it.digitToInt() }
