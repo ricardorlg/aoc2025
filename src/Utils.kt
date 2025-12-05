@@ -10,6 +10,12 @@ import kotlin.time.measureTimedValue
 fun readInput(name: String, day: Int) = Path("inputs/day${day}/$name.txt").readText().trim().lines()
 
 /**
+ * Reads a single line from the given input txt file.
+ */
+fun readInputString(name: String, day: Int) = Path("inputs/day${day}/$name.txt").readText().trim()
+
+
+/**
  * Converts string to md5 hash.
  */
 fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray()))
@@ -37,3 +43,10 @@ inline fun executeWithTime(part1: Boolean = true, block: () -> Any) {
 fun Int.isOdd() = this % 2 != 0
 fun Int.isEven() = this % 2 == 0
 fun String.toListOfDigits() = map { it.digitToInt() }
+fun <T> List<T>.breakOn(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
+    val index = indexOfFirst(predicate)
+    if(index == -1) throw IllegalArgumentException("No element matched the predicate.")
+    if (index == 0) return emptyList<T>() to this
+    if (index == lastIndex) return this to emptyList()
+    return take(index) to drop(index + 1)
+}
