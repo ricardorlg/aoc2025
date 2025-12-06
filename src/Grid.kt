@@ -3,7 +3,7 @@ class Grid(input: List<String>) {
 
     val points = grid.indices.flatMap { r -> grid[r].indices.map { c -> Point2D(r, c) } }
     val rows = grid.size
-    val columns = grid[0].size
+    val columns = grid.maxOf { it.size }
 
     operator fun get(p: Point2D): Char? {
         return grid.getOrNull(p.row)?.getOrNull(p.column)
@@ -11,6 +11,16 @@ class Grid(input: List<String>) {
 
     operator fun set(p: Point2D, value: Char) {
         grid[p.row][p.column] = value
+    }
+
+    fun allRowsData(): List<String> {
+        return grid.map { it.joinToString("") }
+    }
+
+    fun allColumnsData(): List<String> {
+        return List(columns) { col ->
+            grid.map { it.getOrNull(col) ?: "" }.joinToString("")
+        }
     }
 
     fun getAdjacentItems(p: Point2D): List<Char> {
@@ -50,6 +60,7 @@ class Grid(input: List<String>) {
     fun getRow(row: Int): List<Point2D> {
         return grid[row].indices.map { Point2D(row, it) }
     }
+
     fun setRowData(row: Int, data: List<Char>) {
         data.forEachIndexed { index, char -> grid[row][index] = char }
     }
@@ -60,7 +71,7 @@ class Grid(input: List<String>) {
 
     fun updateGrid(newGrid: Grid) {
         points.forEach {
-            set(it,newGrid[it]!!)
+            set(it, newGrid[it]!!)
         }
     }
 }
