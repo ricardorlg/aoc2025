@@ -69,6 +69,10 @@ class Grid(input: List<String>) {
         return Grid(grid.map { it.joinToString("") })
     }
 
+    fun getColumn(column: Int): List<Point2D> {
+        return grid.indices.map { Point2D(it, column) }
+    }
+
     fun updateGrid(newGrid: Grid) {
         points.forEach {
             set(it, newGrid[it]!!)
