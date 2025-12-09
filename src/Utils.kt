@@ -101,3 +101,23 @@ inline fun <T, R> Iterable<T>.split(predicate: (T) -> Boolean, transform: (T) ->
  * Splits the iterable into a list of lists, starting a new list whenever an element equals the [separator].
  */
 fun <T> Iterable<T>.split(separator: T): List<List<T>> = split { it == separator }
+
+fun <T> List<T>.combinations(size: Int): List<List<T>> {
+    if (size == 0) return listOf(emptyList())
+    if (isEmpty()) return emptyList()
+
+    val head = first()
+    val tail = drop(1)
+
+    return tail.combinations(size - 1).map { listOf(head) + it } + tail.combinations(size)
+}
+
+fun <T> List<T>.allPairs(): Sequence<Pair<T, T>> {
+    return sequence {
+        for (i in indices) {
+            for (j in (i + 1) until size) {
+                yield(get(i) to get(j))
+            }
+        }
+    }
+}
