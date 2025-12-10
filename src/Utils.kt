@@ -1,5 +1,6 @@
 import java.math.BigInteger
 import java.security.MessageDigest
+import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.readText
 import kotlin.time.measureTimedValue
@@ -120,4 +121,52 @@ fun <T> List<T>.allPairs(): Sequence<Pair<T, T>> {
             }
         }
     }
+}
+
+fun <T> aStar(
+    start: T,
+    isGoal: (T) -> Boolean,
+    neighbors: (T) -> Iterable<T>,
+    heuristic: (T) -> Long = { 0 }
+): List<T>? {
+    val openSet = PriorityQueue<Node<T>>()
+    openSet.add(Node(start, 0, heuristic(start)))
+
+    val cameFrom = mutableMapOf<T, T>()
+    val gScore = mutableMapOf(start to 0L)
+
+    while (openSet.isNotEmpty()) {
+        val current = openSet.poll()
+        val currentItem = current.item
+
+        if (isGoal(currentItem)) {
+            return reconstructPath(cameFrom, currentItem)
+        }
+
+        if (current.cost > (gScore[currentItem] ?: Long.MAX_VALUE)) continue
+
+        for (neighbor in neighbors(currentItem)) {
+            val tentativeGScore = current.cost + 1
+            if (tentativeGScore < (gScore[neighbor] ?: Long.MAX_VALUE)) {
+                cameFrom[neighbor] = currentItem
+                gScore[neighbor] = tentativeGScore
+                openSet.add(Node(neighbor, tentativeGScore, tentativeGScore + heuristic(neighbor)))
+            }
+        }
+    }
+    return null
+}
+
+private fun <T> reconstructPath(cameFrom: Map<T, T>, end: T): List<T> {
+    return generateSequence(end) { cameFrom[it] }
+        .toList()
+        .reversed()
+}
+
+private data class Node<T>(
+    val item: T,
+    val cost: Long,
+    val estimatedTotalCost: Long
+) : Comparable<Node<T>> {
+    override fun compareTo(other: Node<T>): Int = estimatedTotalCost.compareTo(other.estimatedTotalCost)
 }
