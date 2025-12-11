@@ -10,6 +10,7 @@ sourceSets {
 
 dependencies {
     implementation("tools.aqua:z3-turnkey:4.14.1")
+    implementation("io.arrow-kt:arrow-core:2.2.0")
 }
 
 tasks {
